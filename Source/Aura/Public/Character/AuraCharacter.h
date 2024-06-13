@@ -13,5 +13,17 @@ UCLASS()
 class AURA_API AAuraCharacter : public AAuraCharacterBase
 {
 	GENERATED_BODY()
+
+
+public:
+	AAuraCharacter();
+
+protected:
 	
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<class USpringArmComponent> CameraBoom;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<class UCameraComponent> FollowCamera;
 };
