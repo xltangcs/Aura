@@ -20,6 +20,9 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetUAttributeSet() const { return AttributeSet; }
 protected:
+	virtual void InitAbilityActorInfo();
+
+	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 	

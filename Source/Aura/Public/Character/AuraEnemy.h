@@ -24,5 +24,8 @@ public:
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 	/* End Enemy Interface */
+
+private:
+	virtual void InitAbilityActorInfo() override;
 	
 };
