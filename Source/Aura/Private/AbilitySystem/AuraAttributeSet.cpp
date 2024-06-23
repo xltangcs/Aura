@@ -4,6 +4,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
+#include "../../../../../../UE_5.2/Engine/Plugins/Experimental/NNE/Source/ThirdParty/onnxruntime/Dependencies/gsl/gsl-lite.hpp"
 #include "GameFramework/Character.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -22,22 +23,6 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
-}
-
-void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
-{
-	Super::PreAttributeChange(Attribute, NewValue);
-
-	if(Attribute == GetHealthAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
-	}
-	if(Attribute == GetManaAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMana());
-	}
-
-	
 }
 
 void UAuraAttributeSet::SetFEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties) const
@@ -83,8 +68,15 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetFEffectProperties(Data, Props);
 
+	if(Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+	}
 	
-	
+	if(Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
+	}
 }
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
