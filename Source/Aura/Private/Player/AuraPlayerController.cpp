@@ -5,7 +5,11 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Character/AuraCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -44,7 +48,9 @@ void AAuraPlayerController::SetupInputComponent()
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
-	
+	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Look);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AAuraPlayerController::Dash);
+	EnhancedInputComponent->BindAction(CameraDistanceAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::CameraDistance);
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -113,3 +119,21 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 
 }
 
+void AAuraPlayerController::Look(const FInputActionValue& Value)
+{
+	if(APawn* ControlledPawn = GetPawn<APawn>())
+	{
+		ControlledPawn->AddControllerYawInput(Value.Get<float>());
+	}
+	
+}
+
+void AAuraPlayerController::CameraDistance(const FInputActionValue& InputActionValue)
+{
+	if(APawn* ControlledPawn = GetPawn<APawn>())
+	{
+		const ACharacter* AAuraCharacter = Cast<ACharacter>(ControlledPawn);
+		USpringArmComponent* AuraSpring = AAuraCharacter->GetComponentByClass<USpringArmComponent>();
+		AuraSpring->TargetArmLength = FMath::Clamp(AuraSpring->TargetArmLength + InputActionValue.Get<float>() * 10.0, 200.0f, 800.0f);
+	}
+}

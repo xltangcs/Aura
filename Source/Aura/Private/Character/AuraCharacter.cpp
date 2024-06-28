@@ -29,15 +29,16 @@ AAuraCharacter::AAuraCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom ->SetupAttachment(GetMesh());
 	CameraBoom->TargetArmLength = 400.f;
-
+	CameraBoom->bUsePawnControlRotation = true;
+	
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-
-	
-	CameraBoom->bInheritPitch = false;
-	CameraBoom->bInheritRoll = false;
-	CameraBoom->bInheritYaw = false;
 	FollowCamera->bUsePawnControlRotation = false;
+	
+	/*CameraBoom->bInheritPitch = false;
+	CameraBoom->bInheritRoll = false;
+	CameraBoom->bInheritYaw = false;*/
+	
 	
 }
 
@@ -51,6 +52,14 @@ void AAuraCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	InitAbilityActorInfo();
+}
+
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	
+	return AuraPlayerState->GetPlayerLevel();
 }
 
 void AAuraCharacter::InitAbilityActorInfo()
@@ -72,5 +81,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 		}
 	}
 
-	
+	InitializeDefaultAttributes();
 }

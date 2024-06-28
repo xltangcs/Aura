@@ -29,8 +29,13 @@ protected:
 	virtual void SetupInputComponent() override;;
 	virtual void PlayerTick(float DeltaTime) override;
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void Dash(const FInputActionValue& InputActionValue);
+	
 private:
 	void Move(const FInputActionValue& InputActionValue);
+	void Look(const FInputActionValue& InputActionValue);
+	void CameraDistance(const FInputActionValue& InputActionValue);
 	void CursorTrace();
 	
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -38,7 +43,16 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
+	
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> LookAction;
+	
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> DashAction;
 
-	TObjectPtr<IEnemyInterface> LastActor;
-	TObjectPtr<IEnemyInterface> ThisActor;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> CameraDistanceAction;
+	
+	IEnemyInterface* LastActor;
+	IEnemyInterface* ThisActor;
 };
